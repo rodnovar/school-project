@@ -637,3 +637,73 @@ select:focus {
     flex-direction: column;
   }
 }
+
+/* EcoPoint: стили для версии с реальными данными */
+.data-note {
+  display: grid;
+  gap: 4px;
+  margin: -8px 0 22px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--green-light);
+  color: var(--green-dark);
+  font-size: 0.9rem;
+}
+
+.data-note span {
+  color: #466652;
+}
+
+.results-header small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+
+.result-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+
+.result-links a,
+.popup-source a {
+  color: var(--green-dark);
+  text-decoration: none;
+}
+
+.result-links a:hover,
+.popup-source a:hover {
+  text-decoration: underline;
+}
+
+.popup-title {
+  margin-bottom: 4px;
+  font-weight: 800;
+}
+
+.popup-address,
+.popup-hours,
+.popup-source {
+  margin-top: 4px;
+  font-size: 0.82rem;
+}
+
+@media (max-width: 760px) {
+  .hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+
+  .hero-stats div:first-child {
+    grid-column: 1 / -1;
+  }
+}

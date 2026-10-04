@@ -7,6 +7,7 @@
   <title>EcoPoint — пункты переработки рядом</title>
 
   <link rel="preconnect" href="https://unpkg.com" />
+  <link rel="preconnect" href="https://tile.openstreetmap.org" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -38,18 +39,18 @@
           </p>
           <div class="hero-actions">
             <a class="button primary" href="#search">Найти пункт</a>
-            <a class="button secondary" href="#guide">Как сортировать</a>
+            <a class="button secondary" href="https://recycle.mos.ru/" target="_blank" rel="noopener noreferrer">Официальная карта Москвы</a>
           </div>
           <div class="hero-stats" aria-label="Возможности сервиса">
-            <div><strong>5</strong><span>демо-точек</span></div>
-            <div><strong>8</strong><span>категорий отходов</span></div>
-            <div><strong>1</strong><span>понятная карта</span></div>
+            <div><strong>840+</strong><span>официальных экоточек в Москве</span></div>
+            <div><strong id="loadedPointCount">—</strong><span>точек загружено в EcoPoint</span></div>
+            <div><strong>10</strong><span>категорий отходов</span></div>
           </div>
         </div>
 
         <div class="hero-card" aria-hidden="true">
           <div class="hero-card-icon">♻</div>
-          <p>Бумага • пластик • стекло • металл • батарейки • электроника</p>
+          <p>Бумага • пластик • стекло • металл • батарейки • электроника • одежда</p>
           <div class="mini-route">
             <span>Ваш адрес</span>
             <span class="route-line"></span>
@@ -64,7 +65,12 @@
         <div class="section-heading">
           <p class="eyebrow">Поиск по Москве</p>
           <h2>Найдите ближайший пункт приёма</h2>
-          <p>Введите адрес, выберите тип отходов — и EcoPoint отсортирует точки по расстоянию.</p>
+          <p>Введите адрес, выберите тип отходов — и EcoPoint найдёт подходящие точки среди актуальных данных OpenStreetMap.</p>
+        </div>
+
+        <div class="data-note">
+          <strong>Откуда берутся точки?</strong>
+          <span>Основная база загружается из OpenStreetMap через Overpass API и может обновляться без изменения кода сайта. Официальный городской проект сообщает о сети более чем из 840 экоточек; полный официальный список смотрите на recycle.mos.ru.</span>
         </div>
 
         <div class="search-panel">
@@ -81,24 +87,29 @@
                 <option value="plastic">Пластик</option>
                 <option value="glass">Стекло</option>
                 <option value="metal">Металл</option>
-                <option value="batteries">Батарейки</option>
-                <option value="electronics">Электроника</option>
-                <option value="textile">Одежда и текстиль</option>
-                <option value="special">Редкие фракции</option>
+                <option value="batteries">Батарейки и аккумуляторы</option>
+                <option value="electronics">Электроника и техника</option>
+                <option value="textile">Одежда, обувь и текстиль</option>
+                <option value="books">Книги</option>
+                <option value="tires">Шины</option>
+                <option value="special">Другие специальные фракции</option>
               </select>
             </label>
             <button class="button primary search-button" type="submit">Найти рядом</button>
           </form>
-          <p class="privacy-note">При поиске введённый адрес отправляется сервису геокодирования OpenStreetMap для определения координат.</p>
-          <p id="statusMessage" class="status-message" role="status" aria-live="polite"></p>
+          <p class="privacy-note">При поиске адрес отправляется сервису геокодирования OpenStreetMap Nominatim. База пунктов загружается через Overpass API.</p>
+          <p id="statusMessage" class="status-message" role="status" aria-live="polite">Загружаем реальные пункты переработки Москвы…</p>
         </div>
 
         <div class="map-layout">
           <div id="map" class="map" aria-label="Карта пунктов приёма вторсырья"></div>
           <aside class="results-panel">
             <div class="results-header">
-              <h3>Пункты рядом</h3>
-              <span id="resultCount" class="badge">5</span>
+              <div>
+                <h3>Пункты рядом</h3>
+                <small id="resultsHint">Сначала загружаем базу</small>
+              </div>
+              <span id="resultCount" class="badge">0</span>
             </div>
             <div id="resultsList" class="results-list"></div>
           </aside>
@@ -116,17 +127,17 @@
           <article class="step-card">
             <span class="step-number">01</span>
             <h3>Введите адрес</h3>
-            <p>Сервис определяет координаты выбранного адреса в Москве.</p>
+            <p>Сервис определяет координаты выбранного адреса в Москве через OpenStreetMap.</p>
           </article>
           <article class="step-card">
             <span class="step-number">02</span>
             <h3>Выберите отходы</h3>
-            <p>Отфильтруйте точки по бумаге, пластику, батарейкам, электронике и другим категориям.</p>
+            <p>EcoPoint использует теги пунктов переработки, чтобы отфильтровать нужную категорию.</p>
           </article>
           <article class="step-card">
             <span class="step-number">03</span>
             <h3>Выберите пункт</h3>
-            <p>EcoPoint рассчитывает расстояние и показывает подходящие пункты на карте.</p>
+            <p>Все подходящие точки сравниваются по расстоянию, а ближайшие показываются первыми.</p>
           </article>
         </div>
       </div>
@@ -137,40 +148,16 @@
         <div class="section-heading">
           <p class="eyebrow">Экогид</p>
           <h2>Как подготовить отходы к сдаче</h2>
-          <p>Несколько простых правил помогают вторсырью действительно попасть на переработку.</p>
+          <p>Правила конкретного пункта могут отличаться, поэтому перед поездкой лучше проверить информацию у оператора.</p>
         </div>
 
         <div class="guide-grid">
-          <article class="guide-card">
-            <span class="guide-icon">📦</span>
-            <h3>Бумага и картон</h3>
-            <p>Уберите плёнку и скотч, сложите коробки. Сильно загрязнённую и жирную бумагу обычно не принимают.</p>
-          </article>
-          <article class="guide-card">
-            <span class="guide-icon">🧴</span>
-            <h3>Пластик</h3>
-            <p>Ополосните упаковку, уменьшите её объём и проверьте маркировку пластика перед сдачей.</p>
-          </article>
-          <article class="guide-card">
-            <span class="guide-icon">🍾</span>
-            <h3>Стекло</h3>
-            <p>Освободите бутылки и банки от содержимого. Керамика и зеркала требуют отдельной проверки.</p>
-          </article>
-          <article class="guide-card">
-            <span class="guide-icon">🔋</span>
-            <h3>Батарейки</h3>
-            <p>Не выбрасывайте их в обычный контейнер. Храните отдельно и сдавайте в специализированные пункты.</p>
-          </article>
-          <article class="guide-card">
-            <span class="guide-icon">💻</span>
-            <h3>Электроника</h3>
-            <p>Старую технику и кабели лучше сдавать отдельно: они содержат полезные материалы и компоненты.</p>
-          </article>
-          <article class="guide-card">
-            <span class="guide-icon">👕</span>
-            <h3>Одежда и текстиль</h3>
-            <p>Чистые вещи можно передавать на повторное использование, а изношенный текстиль — в специальные пункты.</p>
-          </article>
+          <article class="guide-card"><span class="guide-icon">📦</span><h3>Бумага и картон</h3><p>Уберите плёнку и скотч, сложите коробки. Сильно загрязнённую и жирную бумагу обычно не принимают.</p></article>
+          <article class="guide-card"><span class="guide-icon">🧴</span><h3>Пластик</h3><p>Ополосните упаковку, уменьшите её объём и проверьте маркировку пластика перед сдачей.</p></article>
+          <article class="guide-card"><span class="guide-icon">🍾</span><h3>Стекло</h3><p>Освободите бутылки и банки от содержимого. Керамика, зеркала и жаропрочное стекло обычно собираются отдельно.</p></article>
+          <article class="guide-card"><span class="guide-icon">🔋</span><h3>Батарейки</h3><p>Не выбрасывайте их в обычный контейнер. Храните отдельно и сдавайте в специализированные пункты.</p></article>
+          <article class="guide-card"><span class="guide-icon">💻</span><h3>Электроника</h3><p>Старую технику, кабели и небольшие приборы лучше сдавать отдельно — в них есть материалы, пригодные для повторного использования.</p></article>
+          <article class="guide-card"><span class="guide-icon">👕</span><h3>Одежда и текстиль</h3><p>Сдавайте чистые и сухие вещи. Пригодную одежду могут использовать повторно, остальной текстиль — направить на переработку.</p></article>
         </div>
       </div>
     </section>
@@ -182,15 +169,8 @@
           <h2>Зачем нужен EcoPoint</h2>
         </div>
         <div class="about-copy">
-          <p>
-            Даже человек, который хочет сортировать отходы, часто не знает, куда отнести конкретный предмет,
-            какие фракции принимают рядом и как подготовить их к сдаче. EcoPoint объединяет карту,
-            поиск ближайших точек и краткие правила экологичного обращения с отходами.
-          </p>
-          <p>
-            Текущая версия — прототип для проекта 10 класса. В дальнейшем базу можно расширить,
-            подключить больше московских пунктов, маршрутизацию, личный кабинет и статистику сданного вторсырья.
-          </p>
+          <p>Даже человек, который хочет сортировать отходы, часто не знает, куда отнести конкретный предмет, какие фракции принимают рядом и как подготовить их к сдаче. EcoPoint объединяет карту, поиск ближайших точек и краткие правила экологичного обращения с отходами.</p>
+          <p>Версия проекта использует открытые геоданные. Количество точек в EcoPoint определяется тем, сколько московских объектов переработки описано в OpenStreetMap на момент загрузки. Официальная городская сеть шире, поэтому для дополнительной проверки доступна ссылка на «Экоточки Москвы».</p>
         </div>
       </div>
     </section>
@@ -198,11 +178,8 @@
 
   <footer class="site-footer">
     <div class="container footer-inner">
-      <div>
-        <strong>EcoPoint</strong>
-        <p>Учебный веб-проект о раздельном сборе отходов.</p>
-      </div>
-      <p>Данные о пунктах необходимо проверять перед поездкой.</p>
+      <div><strong>EcoPoint</strong><p>Учебный веб-проект о раздельном сборе отходов.</p></div>
+      <p>Данные меняются. Перед поездкой проверяйте режим работы и перечень принимаемых фракций.</p>
     </div>
   </footer>
 
