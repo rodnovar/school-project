@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="EcoPoint — веб-сервис поиска ближайших пунктов раздельного сбора и переработки отходов в Москве." />
+  <title>EcoPoint — пункты переработки рядом</title>
+
+  <link rel="preconnect" href="https://unpkg.com" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="EcoPoint — на главную">
+        <span class="brand-mark" aria-hidden="true">♻</span>
+        <span>EcoPoint</span>
+      </a>
+      <nav class="nav" aria-label="Основная навигация">
+        <a href="#search">Найти пункт</a>
+        <a href="#how-it-works">Как это работает</a>
+        <a href="#guide">Экогид</a>
+        <a href="#about">О проекте</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Раздельный сбор — проще, чем кажется</p>
+          <h1>Найди, куда сдать отходы рядом с домом</h1>
+          <p class="hero-text">
+            EcoPoint помогает найти ближайшие пункты приёма вторсырья в Москве,
+            выбрать нужный вид отходов и узнать, как правильно подготовить их к сдаче.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#search">Найти пункт</a>
+            <a class="button secondary" href="#guide">Как сортировать</a>
+          </div>
+          <div class="hero-stats" aria-label="Возможности сервиса">
+            <div><strong>5</strong><span>демо-точек</span></div>
+            <div><strong>8</strong><span>категорий отходов</span></div>
+            <div><strong>1</strong><span>понятная карта</span></div>
+          </div>
+        </div>
+
+        <div class="hero-card" aria-hidden="true">
+          <div class="hero-card-icon">♻</div>
+          <p>Бумага • пластик • стекло • металл • батарейки • электроника</p>
+          <div class="mini-route">
+            <span>Ваш адрес</span>
+            <span class="route-line"></span>
+            <span>Ближайший экопункт</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="search">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Поиск по Москве</p>
+          <h2>Найдите ближайший пункт приёма</h2>
+          <p>Введите адрес, выберите тип отходов — и EcoPoint отсортирует точки по расстоянию.</p>
+        </div>
+
+        <div class="search-panel">
+          <form id="searchForm" class="search-form">
+            <label>
+              <span>Ваш адрес</span>
+              <input id="addressInput" type="text" placeholder="Например: Москва, Тверская улица, 10" autocomplete="street-address" required />
+            </label>
+            <label>
+              <span>Что хотите сдать?</span>
+              <select id="wasteFilter">
+                <option value="all">Все виды</option>
+                <option value="paper">Бумага и картон</option>
+                <option value="plastic">Пластик</option>
+                <option value="glass">Стекло</option>
+                <option value="metal">Металл</option>
+                <option value="batteries">Батарейки</option>
+                <option value="electronics">Электроника</option>
+                <option value="textile">Одежда и текстиль</option>
+                <option value="special">Редкие фракции</option>
+              </select>
+            </label>
+            <button class="button primary search-button" type="submit">Найти рядом</button>
+          </form>
+          <p class="privacy-note">При поиске введённый адрес отправляется сервису геокодирования OpenStreetMap для определения координат.</p>
+          <p id="statusMessage" class="status-message" role="status" aria-live="polite"></p>
+        </div>
+
+        <div class="map-layout">
+          <div id="map" class="map" aria-label="Карта пунктов приёма вторсырья"></div>
+          <aside class="results-panel">
+            <div class="results-header">
+              <h3>Пункты рядом</h3>
+              <span id="resultCount" class="badge">5</span>
+            </div>
+            <div id="resultsList" class="results-list"></div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section soft" id="how-it-works">
+      <div class="container">
+        <div class="section-heading centered">
+          <p class="eyebrow">Принцип работы</p>
+          <h2>Три шага до экологичного решения</h2>
+        </div>
+        <div class="steps-grid">
+          <article class="step-card">
+            <span class="step-number">01</span>
+            <h3>Введите адрес</h3>
+            <p>Сервис определяет координаты выбранного адреса в Москве.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-number">02</span>
+            <h3>Выберите отходы</h3>
+            <p>Отфильтруйте точки по бумаге, пластику, батарейкам, электронике и другим категориям.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-number">03</span>
+            <h3>Выберите пункт</h3>
+            <p>EcoPoint рассчитывает расстояние и показывает подходящие пункты на карте.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="guide">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Экогид</p>
+          <h2>Как подготовить отходы к сдаче</h2>
+          <p>Несколько простых правил помогают вторсырью действительно попасть на переработку.</p>
+        </div>
+
+        <div class="guide-grid">
+          <article class="guide-card">
+            <span class="guide-icon">📦</span>
+            <h3>Бумага и картон</h3>
+            <p>Уберите плёнку и скотч, сложите коробки. Сильно загрязнённую и жирную бумагу обычно не принимают.</p>
+          </article>
+          <article class="guide-card">
+            <span class="guide-icon">🧴</span>
+            <h3>Пластик</h3>
+            <p>Ополосните упаковку, уменьшите её объём и проверьте маркировку пластика перед сдачей.</p>
+          </article>
+          <article class="guide-card">
+            <span class="guide-icon">🍾</span>
+            <h3>Стекло</h3>
+            <p>Освободите бутылки и банки от содержимого. Керамика и зеркала требуют отдельной проверки.</p>
+          </article>
+          <article class="guide-card">
+            <span class="guide-icon">🔋</span>
+            <h3>Батарейки</h3>
+            <p>Не выбрасывайте их в обычный контейнер. Храните отдельно и сдавайте в специализированные пункты.</p>
+          </article>
+          <article class="guide-card">
+            <span class="guide-icon">💻</span>
+            <h3>Электроника</h3>
+            <p>Старую технику и кабели лучше сдавать отдельно: они содержат полезные материалы и компоненты.</p>
+          </article>
+          <article class="guide-card">
+            <span class="guide-icon">👕</span>
+            <h3>Одежда и текстиль</h3>
+            <p>Чистые вещи можно передавать на повторное использование, а изношенный текстиль — в специальные пункты.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section accent" id="about">
+      <div class="container about-grid">
+        <div>
+          <p class="eyebrow light">Школьный инженерный проект</p>
+          <h2>Зачем нужен EcoPoint</h2>
+        </div>
+        <div class="about-copy">
+          <p>
+            Даже человек, который хочет сортировать отходы, часто не знает, куда отнести конкретный предмет,
+            какие фракции принимают рядом и как подготовить их к сдаче. EcoPoint объединяет карту,
+            поиск ближайших точек и краткие правила экологичного обращения с отходами.
+          </p>
+          <p>
+            Текущая версия — прототип для проекта 10 класса. В дальнейшем базу можно расширить,
+            подключить больше московских пунктов, маршрутизацию, личный кабинет и статистику сданного вторсырья.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>EcoPoint</strong>
+        <p>Учебный веб-проект о раздельном сборе отходов.</p>
+      </div>
+      <p>Данные о пунктах необходимо проверять перед поездкой.</p>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="script.js"></script>
+</body>
+</html>
