@@ -79,6 +79,7 @@ function initMap() {
   }
 
   map = L.map("map", { scrollWheelZoom: false, preferCanvas: true }).setView(MOSCOW_CENTER, 10);
+  map.attributionControl.setPrefix(false);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
